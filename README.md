@@ -1,6 +1,13 @@
-# 카카오 Arena Valhalla ( 함께 깨기 )
+* [Kakao-Valhalla 오픈카톡방](https://open.kakao.com/o/go6Idb4)
+* [Kakao-Arena 대회Link](https://arena.kakao.com/c/1)
 
-### 포부
+# 카카오 Arena -> Valhalla
+
+> Kakao-Arena를 Arena 그 이상의 피터지는 Valhalla로. (모두를 위한 코드 전쟁터)
+
+__우리는 Kakao-arena에 참여하며 Demiguises팀의 모든 코드와 아이디어를 공개합니다.__
+
+### Introduction
 대회는 **Competition**이지만, 우리는 **Contribution**으로 이 대회를 깨보고 싶다. 
 
 마치 넷플릭스에서 진행된 추천 알고리즘 대회처럼, 
