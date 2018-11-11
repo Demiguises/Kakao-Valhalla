@@ -1,4 +1,4 @@
-# 카카오 아레나 공성전 ( 함께 깨기 )
+# 카카오 Arena Valhalla ( 함께 깨기 )
 
 ### 포부
 대회는 **Competition**이지만, 우리는 **Contribution**으로 이 대회를 깨보고 싶다. 
@@ -57,4 +57,4 @@
 ### 기여자
 
 1. rocketgrowthsj : 
-2. trohoper : 
+2. Best10
