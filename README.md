@@ -56,5 +56,5 @@
 
 ### 기여자
 
-1. rocketgrowthsj : 
-2. Best10
+1. rocketgrowthsj : rocketgrowthsj@gmail.com
+2. Best10 : Best10.csy@gmail.com
