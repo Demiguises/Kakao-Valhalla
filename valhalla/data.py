@@ -10,64 +10,13 @@ import pandas as pd
 from tqdm import tqdm
 
 
-def merge_h5_files(merge_dir, save_path, excludes=['img_feat']):
-    """
-    나뉘어진 h5 파일을 합쳐주는 함수
-
-    :param merge_dir: 함께 합칠 .h5 파일을 모은 디렉토리의 위치
-    :param save_path: 모은 것을 저장할 위치
-    :param excludes: 제외할 Column 이름
-    :return:
-    """
-    # merge 하고자 하는 데이터 셋의 파일 path
-    file_paths = [os.path.join(merge_dir, file_name)
-                  for file_name in os.listdir(merge_dir)
-                  if "chunk" in file_name]
-
-    # Merge하고자 하는 attribute
-    with h5py.File(file_paths[0], 'r') as f:
-        group_name = list(f.keys())[0]
-        attrs = list(f[group_name].keys())
-    attrs = list(set(attrs) - set(excludes))
-
-    # Main Merge
-    with h5py.File(save_path, 'w') as write_file:
-        for attr in tqdm(attrs):
-            values = {}
-            for file_path in file_paths:
-                # 데이터를 읽어들임
-                with h5py.File(file_path, 'r') as read_file:
-                    group_name = list(read_file.keys())[0]
-                    value = read_file[group_name][attr][:]
-
-                # subset 그룹별로 저장
-                if group_name not in values:
-                    values[group_name] = [value]
-                else:
-                    values[group_name].append(value)
-
-            # 나뉘어진 데이터들을 merge함
-            for subset_name in values.keys():
-                merge_value = np.concatenate(values[subset_name])
-
-                if subset_name not in write_file:
-                    subset = write_file.create_group(subset_name)
-                else:
-                    subset = write_file[subset_name]
-
-                subset.create_dataset(attr, data=merge_value)
-
-    file_size = os.stat(save_path).st_size // (1024 ** 2)
-    print("{}에 저장되었습니다. (size : {}mb)".format(save_path, file_size))
-
-
 class DataLoader(object):
     """
     h5파일에서 데이터를 불러오는 DataLoader. H5파일의 모든 데이터를 램에 한번에 올리지 않고
     pandas DataFrame와 같이 지정해줄 때, 부분만 가져올 수 있도록 코드를 수정함
 
     example
-    >>> dl = DataLoader("./data/prep/train_string.h5")
+    >>> dl = DataLoader("./data/prep/textOnly.h5",'train')
     >>> dl['pid',0]
                 pid
     0	Q4081781803
@@ -215,6 +164,57 @@ def get_category_map(json_path):
         "mcateid": m_cate_map,
         "dcateid": d_cate_map
     }
+
+
+def merge_h5_files(merge_dir, save_path, excludes=['img_feat']):
+    """
+    나뉘어진 h5 파일을 합쳐주는 함수
+
+    :param merge_dir: 함께 합칠 .h5 파일을 모은 디렉토리의 위치
+    :param save_path: 모은 것을 저장할 위치
+    :param excludes: 제외할 Column 이름
+    :return:
+    """
+    # merge 하고자 하는 데이터 셋의 파일 path
+    file_paths = [os.path.join(merge_dir, file_name)
+                  for file_name in os.listdir(merge_dir)
+                  if "chunk" in file_name]
+
+    # Merge하고자 하는 attribute
+    with h5py.File(file_paths[0], 'r') as f:
+        group_name = list(f.keys())[0]
+        attrs = list(f[group_name].keys())
+    attrs = list(set(attrs) - set(excludes))
+
+    # Main Merge
+    with h5py.File(save_path, 'w') as write_file:
+        for attr in tqdm(attrs):
+            values = {}
+            for file_path in file_paths:
+                # 데이터를 읽어들임
+                with h5py.File(file_path, 'r') as read_file:
+                    group_name = list(read_file.keys())[0]
+                    value = read_file[group_name][attr][:]
+
+                # subset 그룹별로 저장
+                if group_name not in values:
+                    values[group_name] = [value]
+                else:
+                    values[group_name].append(value)
+
+            # 나뉘어진 데이터들을 merge함
+            for subset_name in values.keys():
+                merge_value = np.concatenate(values[subset_name])
+
+                if subset_name not in write_file:
+                    subset = write_file.create_group(subset_name)
+                else:
+                    subset = write_file[subset_name]
+
+                subset.create_dataset(attr, data=merge_value)
+
+    file_size = os.stat(save_path).st_size // (1024 ** 2)
+    print("{}에 저장되었습니다. (size : {}mb)".format(save_path, file_size))
 
 
 if __name__ == "__main__":
