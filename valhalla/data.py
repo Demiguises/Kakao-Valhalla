@@ -111,7 +111,7 @@ class DataLoader(object):
                 self._str_cols.append(col)
             elif np.issubdtype(value.dtype, np.integer):
                 self._int_cols.append(col)
-            elif np.issubdtype(value.dtype, np.float):
+            elif np.issubdtype(value.dtype, np.floating):
                 warnings.warn("아직 img_feat를 Data Loader로 호출할 수 없습니다. img_feat는 직접 h5파일에서 호출해 주세요.")
                 # TODO : 아직 img_feat를 읽어들이는 기능은 추가하지 않았음
                 pass
