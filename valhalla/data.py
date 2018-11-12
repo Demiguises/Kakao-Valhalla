@@ -1,5 +1,6 @@
 import json
 import os
+import warnings
 from operator import itemgetter
 
 import fire
@@ -32,15 +33,29 @@ def merge_h5_files(merge_dir, save_path, excludes=['img_feat']):
     # Main Merge
     with h5py.File(save_path, 'w') as write_file:
         for attr in tqdm(attrs):
-            values = []
+            values = {}
             for file_path in file_paths:
                 # 데이터를 읽어들임
                 with h5py.File(file_path, 'r') as read_file:
+                    group_name = list(read_file.keys())[0]
                     value = read_file[group_name][attr][:]
-                values.append(value)
+
+                # subset 그룹별로 저장
+                if group_name not in values:
+                    values[group_name] = [value]
+                else:
+                    values[group_name].append(value)
+
             # 나뉘어진 데이터들을 merge함
-            merge_value = np.concatenate(values)
-            write_file.create_dataset(attr, data=merge_value)
+            for subset_name in values.keys():
+                merge_value = np.concatenate(values[subset_name])
+
+                if subset_name not in write_file:
+                    subset = write_file.create_group(subset_name)
+                else:
+                    subset = write_file[subset_name]
+
+                subset.create_dataset(attr, data=merge_value)
 
     file_size = os.stat(save_path).st_size // (1024 ** 2)
     print("{}에 저장되었습니다. (size : {}mb)".format(save_path, file_size))
@@ -52,7 +67,7 @@ class DataLoader(object):
     pandas DataFrame와 같이 지정해줄 때, 부분만 가져올 수 있도록 코드를 수정함
 
     example
-    >>> dl = DataLoader("./prep.h5")
+    >>> dl = DataLoader("./data/prep/train_string.h5")
     >>> dl['pid',0]
                 pid
     0	Q4081781803
@@ -74,24 +89,37 @@ class DataLoader(object):
 
     """
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, subset_name='train'):
+        """
+
+        :param file_path: 읽어들일 .h5 path
+        :param subset_name: train / dev / test 중 하나
+        """
         if not os.path.exists(file_path):
-            raise ValueError("file_path{}에 파일이 존재안합니다.".format(file_path))
+            raise ValueError("file_path{}에 파일이 존재하지 않습니다.".format(file_path))
 
         self._f = h5py.File(file_path)
+        if subset_name not in self._f:
+            raise KeyError("{}이 {}에 없습니다".format(subset_name, file_path))
+        self._g = self._f[subset_name]
+
         # column type 나누기
         self._int_cols = []
         self._str_cols = []
-        for col, value in self._f.items():
+        for col, value in self._g.items():
             if np.issubdtype(value.dtype, np.string_):
                 self._str_cols.append(col)
             elif np.issubdtype(value.dtype, np.integer):
                 self._int_cols.append(col)
+            elif np.issubdtype(value.dtype, np.float):
+                warnings.warn("아직 img_feat를 Data Loader로 호출할 수 없습니다. img_feat는 직접 h5파일에서 호출해 주세요.")
+                # TODO : 아직 img_feat를 읽어들이는 기능은 추가하지 않았음
+                pass
             else:
                 raise ValueError("integer도 아니고 string도 아닌 미친놈이 있어요")
 
         self.columns = self._int_cols + self._str_cols
-        self._len = len(self._f['pid'][:])
+        self._len = len(self._g['pid'][:])
 
     def __len__(self):
         return self._len
@@ -155,7 +183,7 @@ class DataLoader(object):
 
     def _get_item(self, col, slc):
         if col in self.columns:
-            item = self._f[col][slc]
+            item = self._g[col][slc]
         else:
             raise KeyError("DataLoader Column에 {}키는 없습니다.".format(col))
         series = pd.Series(item, name=col)
@@ -191,5 +219,5 @@ def get_category_map(json_path):
 
 if __name__ == "__main__":
     fire.Fire({
-        "preprocess": merge_h5_files
+        "merge": merge_h5_files
     })

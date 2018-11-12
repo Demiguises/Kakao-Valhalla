@@ -3,7 +3,7 @@ from unittest import TestCase, main
 import pandas as pd
 from pandas.util.testing import assert_series_equal, assert_frame_equal
 
-from data_utils import DataLoader
+from valhalla.data import DataLoader
 
 """
 test.h5
@@ -27,7 +27,7 @@ DataLoader의 동작이 제대로 되는지 테스트하기 위한 코드로, �
 
 class DataLoaderSimpleTest(TestCase):
     def setUp(self):
-        self.dl = DataLoader("test.h5")
+        self.dl = DataLoader("test.h5", 'train')
 
     def tearDown(self):
         del self.dl
