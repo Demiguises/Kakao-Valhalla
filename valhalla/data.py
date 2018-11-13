@@ -38,11 +38,11 @@ class DataLoader(object):
 
     """
 
-    def __init__(self, file_path, subset_name='train'):
+    def __init__(self, file_path, subset_name='train', df_format=True):
         """
-
         :param file_path: 읽어들일 .h5 path
         :param subset_name: train / dev / test 중 하나
+        :param df_format: dataframe format으로 출력(False이면, numpy array로 출력)
         """
         if not os.path.exists(file_path):
             raise ValueError("file_path{}에 파일이 존재하지 않습니다.".format(file_path))
@@ -51,6 +51,7 @@ class DataLoader(object):
         if subset_name not in self._f:
             raise KeyError("{}이 {}에 없습니다".format(subset_name, file_path))
         self._g = self._f[subset_name]
+        self._df_format = df_format
 
         # column type 나누기
         self._int_cols = []
@@ -65,7 +66,7 @@ class DataLoader(object):
                 # TODO : 아직 img_feat를 읽어들이는 기능은 추가하지 않았음
                 pass
             else:
-                raise ValueError("integer도 아니고 string도 아닌 미친놈이 있어요")
+                raise ValueError("처리할 수 없는 data type입니다.")
 
         self.columns = self._int_cols + self._str_cols
         self._len = len(self._g['pid'][:])
@@ -83,7 +84,7 @@ class DataLoader(object):
             cols = key
             slc = slice(None, None, None)
         else:
-            raise ValueError("뭔가 지정을 이상하게 했는데...")
+            raise ValueError("범위 지정이 올바르지 않습니다.")
 
         # 인자 유효성 검사
         if isinstance(cols, str):
@@ -93,13 +94,13 @@ class DataLoader(object):
         elif isinstance(cols, slice):
             cols = self.columns[cols]
         else:
-            raise KeyError("column 지정 좀 똑바로 하지?")
+            raise KeyError("column 지정이 올바르지 않습니다.")
 
         if not (isinstance(slc, slice)
                 or isinstance(slc, int)
                 or isinstance(slc, list)
                 or isinstance(slc, np.ndarray)):
-            raise KeyError("범위 값으로 좀 똑바로 넣지?")
+            raise KeyError("범위 지정이 올바르지 않습니다.")
 
         # H5에서 실제로 파일을 가져오는 부분
         if isinstance(slc, list) or isinstance(slc, np.ndarray):
@@ -108,6 +109,10 @@ class DataLoader(object):
             sorted_list = sorted(enumerate(slc), key=itemgetter(1))
             idx, slc = list(zip(*sorted_list))
             idx, slc = list(idx), list(slc)
+
+            reverse_list = sorted(enumerate(idx), key=itemgetter(1))
+            reverse_idx, _ = list(zip(*reverse_list))
+            reverse_idx = list(reverse_idx)
         else:
             # order가 보장된다.
             order_flag = False
@@ -116,12 +121,18 @@ class DataLoader(object):
         for col in cols:
             item = self._get_item(col, slc)
             if order_flag:
-                item.index = idx
-                item.sort_index(inplace=True)
+                if self._df_format:
+                    item = item[reverse_idx]
+                    item.index = range(max(reverse_idx) + 1)
+                else:
+                    item = item[reverse_idx]
             items.append(item)
 
         if len(items) > 1:
-            return pd.concat(items, axis=1)
+            if self._df_format:
+                return pd.concat(items, axis=1)
+            else:
+                return np.stack(items, axis=1)
         else:
             return items[0]
 
@@ -135,17 +146,27 @@ class DataLoader(object):
             item = self._g[col][slc]
         else:
             raise KeyError("DataLoader Column에 {}키는 없습니다.".format(col))
-        series = pd.Series(item, name=col)
-
-        if col in self._str_cols:
-            return series.map(lambda x: x.decode('utf-8'))
+        if self._df_format:
+            series = pd.Series(item, name=col)
+            if col in self._str_cols:
+                return series.map(self._decode_utf8)
+            else:
+                return series
         else:
-            return series
+            if col in self._str_cols:
+                return np.array(list(map(self._decode_utf8, item)))
+            else:
+                return item
+
+    @staticmethod
+    def _decode_utf8(byte):
+        return byte.decode('utf-8')
+
 
 
 def get_category_map(json_path):
     """
-    카카오에서 제공된 json 파일을 파싱하여 code2name map return
+    카카오에서 제공된 json 파일을 파싱하여 code2name dictionary를 return
     :param json_path:
     :return: dictionary
 
