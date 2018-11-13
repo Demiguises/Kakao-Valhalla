@@ -32,7 +32,16 @@ __우리는 Kakao-arena에 참여하며 Demiguises팀의 모든 코드와 아이
 ```
 
 이 글을 보고 혹시 함께 공부해보고 싶고, 이 대회에 도전하고 싶은 사람들은 위의 오픈카톡방으로 연락주시면 감사하다.
-종종 연락하고 안부인사 좀 묻고 그런 사이가 좀 되어 보자.
+종종 연락하고 안부인사 좀 묻고 그런 사이가 좀 되어 보자. 
+
+(아직 우리의 리파짓토리가 정리되지 않아서, 오픈카톡방에 비밀번호를 걸었습니다. 곧 이 코드베이스가 안정되는 순간, 
+오픈카톡방의 비밀번호도 풀겠습니다.)
+
+### 주의
+
+코드 골격을 잡아나가고 있는 단계이기 때문에, 이 리파짓토리의 코드들은 계속 바뀌고 있습니다.
+저희는 대회 참가하는 모두가 쉽게 사용할 수 있는 **Data Pipeline**을 구축하는 것을 목표로 하고 있습니다.
+조속히 코드 구조를 잡아나가, 모두에게 도움이 되는 **valhalla**가 되겠습니다. 
 
 ### 설치
 
@@ -41,7 +50,7 @@ __우리는 Kakao-arena에 참여하며 Demiguises팀의 모든 코드와 아이
 pip install -r requirements.txt
 
 # 전처리 파일 생성
-python valhalla/data.py merge ../data/raw/ ../data/prep/textOnly.h5
+python valhalla/extract.py merge ../data/raw/ ../data/prep/textOnly.h5
 ```
 
 
