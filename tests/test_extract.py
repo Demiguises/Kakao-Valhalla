@@ -5,7 +5,7 @@ import pandas as pd
 from numpy.testing import assert_array_equal
 from pandas.util.testing import assert_series_equal, assert_frame_equal
 
-from valhalla.data import DataLoader
+from valhalla.extract import DataExtractor
 
 """
 test.h5
@@ -29,7 +29,7 @@ DataLoader의 동작이 제대로 되는지 테스트하기 위한 코드로, �
 
 class DataLoaderSimpleTest(TestCase):
     def setUp(self):
-        self.dl = DataLoader("test.h5", 'train')
+        self.dl = DataExtractor("test.h5", 'train')
 
     def tearDown(self):
         del self.dl
@@ -121,7 +121,7 @@ class DataLoaderSimpleTest(TestCase):
 
 class DataLoaderNumpyOutTest(TestCase):
     def setUp(self):
-        self.dl = DataLoader("test.h5", 'train', df_format=False)
+        self.dl = DataExtractor("test.h5", 'train', df_format=False)
 
     def tearDown(self):
         del self.dl
@@ -208,7 +208,6 @@ class DataLoaderNumpyOutTest(TestCase):
             [24, -1]],
             dtype='int32')
         assert_array_equal(pred, answer)
-
 
 
 if __name__ == '__main__':

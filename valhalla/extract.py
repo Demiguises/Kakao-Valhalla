@@ -10,13 +10,13 @@ import pandas as pd
 from tqdm import tqdm
 
 
-class DataLoader(object):
+class DataExtractor(object):
     """
     h5파일에서 데이터를 불러오는 DataLoader. H5파일의 모든 데이터를 램에 한번에 올리지 않고
     pandas DataFrame와 같이 지정해줄 때, 부분만 가져올 수 있도록 코드를 수정함
 
     example
-    >>> dl = DataLoader("./data/prep/textOnly.h5",'train')
+    >>> dl = DataExtractor("./data/prep/textOnly.h5",'train')
     >>> dl['pid',0]
                 pid
     0	Q4081781803
