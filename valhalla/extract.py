@@ -10,13 +10,13 @@ import pandas as pd
 from tqdm import tqdm
 
 
-class DataLoader(object):
+class DataExtractor(object):
     """
     h5파일에서 데이터를 불러오는 DataLoader. H5파일의 모든 데이터를 램에 한번에 올리지 않고
     pandas DataFrame와 같이 지정해줄 때, 부분만 가져올 수 있도록 코드를 수정함
 
     example
-    >>> dl = DataLoader("./data/prep/textOnly.h5",'train')
+    >>> dl = DataExtractor("./data/prep/textOnly.h5",'train')
     >>> dl['pid',0]
                 pid
     0	Q4081781803
@@ -38,11 +38,11 @@ class DataLoader(object):
 
     """
 
-    def __init__(self, file_path, subset_name='train'):
+    def __init__(self, file_path, subset_name='train', df_format=True):
         """
-
         :param file_path: 읽어들일 .h5 path
         :param subset_name: train / dev / test 중 하나
+        :param df_format: dataframe format으로 출력(False이면, numpy array로 출력)
         """
         if not os.path.exists(file_path):
             raise ValueError("file_path{}에 파일이 존재하지 않습니다.".format(file_path))
@@ -51,6 +51,7 @@ class DataLoader(object):
         if subset_name not in self._f:
             raise KeyError("{}이 {}에 없습니다".format(subset_name, file_path))
         self._g = self._f[subset_name]
+        self._df_format = df_format
 
         # column type 나누기
         self._int_cols = []
@@ -65,7 +66,7 @@ class DataLoader(object):
                 # TODO : 아직 img_feat를 읽어들이는 기능은 추가하지 않았음
                 pass
             else:
-                raise ValueError("integer도 아니고 string도 아닌 미친놈이 있어요")
+                raise ValueError("처리할 수 없는 data type입니다.")
 
         self.columns = self._int_cols + self._str_cols
         self._len = len(self._g['pid'][:])
@@ -74,40 +75,24 @@ class DataLoader(object):
         return self._len
 
     def __getitem__(self, key):
-        if isinstance(key, str):
-            cols = key
-            slc = slice(None, None, None)
-        elif isinstance(key, tuple):
-            cols, slc = key
-        elif isinstance(key, list):
-            cols = key
-            slc = slice(None, None, None)
-        else:
-            raise ValueError("뭔가 지정을 이상하게 했는데...")
-
-        # 인자 유효성 검사
-        if isinstance(cols, str):
-            cols = [cols]
-        elif isinstance(cols, list):
-            cols = cols
-        elif isinstance(cols, slice):
-            cols = self.columns[cols]
-        else:
-            raise KeyError("column 지정 좀 똑바로 하지?")
-
-        if not (isinstance(slc, slice)
-                or isinstance(slc, int)
-                or isinstance(slc, list)
-                or isinstance(slc, np.ndarray)):
-            raise KeyError("범위 값으로 좀 똑바로 넣지?")
+        # key에서 column과 범위를 분리
+        cols, slc = self._divide_col_and_slice(key)
 
         # H5에서 실제로 파일을 가져오는 부분
         if isinstance(slc, list) or isinstance(slc, np.ndarray):
-            # order가 보장이 되지 않는다.
+            # order가 보장이 되지 않음
+            # h5에서는 increasing order로 indexing했을 때만 가져올 수 있으므로
+            # sorting 후 다시 reverse하는 식으로
+            # 코드를 작성함
             order_flag = True
             sorted_list = sorted(enumerate(slc), key=itemgetter(1))
             idx, slc = list(zip(*sorted_list))
             idx, slc = list(idx), list(slc)
+
+            # 다시 기존 순서로 돌아가도록 reverse_idx을 구성
+            reverse_list = sorted(enumerate(idx), key=itemgetter(1))
+            reverse_idx = list(zip(*reverse_list))[0]
+            reverse_idx = list(reverse_idx)
         else:
             # order가 보장된다.
             order_flag = False
@@ -116,12 +101,18 @@ class DataLoader(object):
         for col in cols:
             item = self._get_item(col, slc)
             if order_flag:
-                item.index = idx
-                item.sort_index(inplace=True)
+                if self._df_format:
+                    item = item[reverse_idx]
+                    item.index = range(max(reverse_idx) + 1)
+                else:
+                    item = item[reverse_idx]
             items.append(item)
 
         if len(items) > 1:
-            return pd.concat(items, axis=1)
+            if self._df_format:
+                return pd.concat(items, axis=1)
+            else:
+                return np.stack(items, axis=1)
         else:
             return items[0]
 
@@ -135,17 +126,68 @@ class DataLoader(object):
             item = self._g[col][slc]
         else:
             raise KeyError("DataLoader Column에 {}키는 없습니다.".format(col))
-        series = pd.Series(item, name=col)
-
-        if col in self._str_cols:
-            return series.map(lambda x: x.decode('utf-8'))
+        if self._df_format:
+            series = pd.Series(item, name=col)
+            if col in self._str_cols:
+                return series.map(self._decode_utf8)
+            else:
+                return series
         else:
-            return series
+            if col in self._str_cols:
+                return np.array(list(map(self._decode_utf8, item)))
+            else:
+                return item
+
+    @staticmethod
+    def _decode_utf8(byte):
+        """
+        h5에 저장된 byte형식을 utf-8로 decode
+        :param byte:
+        :return:
+        """
+        return byte.decode('utf-8')
+
+    def _divide_col_and_slice(self, key):
+        """
+        key 값에서 column과 slice를 분리
+        :param key:
+        :return:
+            cols : 가져올 column name list
+            slc : 가져올 row list
+        """
+        if isinstance(key, str):
+            cols = key
+            slc = slice(None, None, None)
+        elif isinstance(key, tuple):
+            cols, slc = key
+        elif isinstance(key, list):
+            cols = key
+            slc = slice(None, None, None)
+        else:
+            raise ValueError("범위 지정이 올바르지 않습니다.")
+
+        # 인자 유효성 검사
+        if not (isinstance(slc, slice)
+                or isinstance(slc, int)
+                or isinstance(slc, list)
+                or isinstance(slc, np.ndarray)):
+            raise KeyError("범위 지정이 올바르지 않습니다.")
+
+        if isinstance(cols, str):
+            cols = [cols]
+        elif isinstance(cols, list):
+            cols = cols
+        elif isinstance(cols, slice):
+            cols = self.columns[cols]
+        else:
+            raise KeyError("column 지정이 올바르지 않습니다.")
+
+        return cols, slc
 
 
 def get_category_map(json_path):
     """
-    카카오에서 제공된 json 파일을 파싱하여 code2name map return
+    카카오에서 제공된 json 파일을 파싱하여 code2name dictionary를 return
     :param json_path:
     :return: dictionary
 
