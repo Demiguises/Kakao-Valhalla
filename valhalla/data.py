@@ -75,43 +75,23 @@ class DataLoader(object):
         return self._len
 
     def __getitem__(self, key):
-        if isinstance(key, str):
-            cols = key
-            slc = slice(None, None, None)
-        elif isinstance(key, tuple):
-            cols, slc = key
-        elif isinstance(key, list):
-            cols = key
-            slc = slice(None, None, None)
-        else:
-            raise ValueError("범위 지정이 올바르지 않습니다.")
-
-        # 인자 유효성 검사
-        if isinstance(cols, str):
-            cols = [cols]
-        elif isinstance(cols, list):
-            cols = cols
-        elif isinstance(cols, slice):
-            cols = self.columns[cols]
-        else:
-            raise KeyError("column 지정이 올바르지 않습니다.")
-
-        if not (isinstance(slc, slice)
-                or isinstance(slc, int)
-                or isinstance(slc, list)
-                or isinstance(slc, np.ndarray)):
-            raise KeyError("범위 지정이 올바르지 않습니다.")
+        # key에서 column과 범위를 분리
+        cols, slc = self._divide_col_and_slice(key)
 
         # H5에서 실제로 파일을 가져오는 부분
         if isinstance(slc, list) or isinstance(slc, np.ndarray):
-            # order가 보장이 되지 않는다.
+            # order가 보장이 되지 않음
+            # h5에서는 increasing order로 indexing했을 때만 가져올 수 있으므로
+            # sorting 후 다시 reverse하는 식으로
+            # 코드를 작성함
             order_flag = True
             sorted_list = sorted(enumerate(slc), key=itemgetter(1))
             idx, slc = list(zip(*sorted_list))
             idx, slc = list(idx), list(slc)
 
+            # 다시 기존 순서로 돌아가도록 reverse_idx을 구성
             reverse_list = sorted(enumerate(idx), key=itemgetter(1))
-            reverse_idx, _ = list(zip(*reverse_list))
+            reverse_idx = list(zip(*reverse_list))[0]
             reverse_idx = list(reverse_idx)
         else:
             # order가 보장된다.
@@ -160,8 +140,49 @@ class DataLoader(object):
 
     @staticmethod
     def _decode_utf8(byte):
+        """
+        h5에 저장된 byte형식을 utf-8로 decode
+        :param byte:
+        :return:
+        """
         return byte.decode('utf-8')
 
+    def _divide_col_and_slice(self, key):
+        """
+        key 값에서 column과 slice를 분리
+        :param key:
+        :return:
+            cols : 가져올 column name list
+            slc : 가져올 row list
+        """
+        if isinstance(key, str):
+            cols = key
+            slc = slice(None, None, None)
+        elif isinstance(key, tuple):
+            cols, slc = key
+        elif isinstance(key, list):
+            cols = key
+            slc = slice(None, None, None)
+        else:
+            raise ValueError("범위 지정이 올바르지 않습니다.")
+
+        # 인자 유효성 검사
+        if not (isinstance(slc, slice)
+                or isinstance(slc, int)
+                or isinstance(slc, list)
+                or isinstance(slc, np.ndarray)):
+            raise KeyError("범위 지정이 올바르지 않습니다.")
+
+        if isinstance(cols, str):
+            cols = [cols]
+        elif isinstance(cols, list):
+            cols = cols
+        elif isinstance(cols, slice):
+            cols = self.columns[cols]
+        else:
+            raise KeyError("column 지정이 올바르지 않습니다.")
+
+        return cols, slc
 
 
 def get_category_map(json_path):
