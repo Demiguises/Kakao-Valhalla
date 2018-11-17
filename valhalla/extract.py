@@ -47,29 +47,31 @@ class DataExtractor(object):
         if not os.path.exists(file_path):
             raise ValueError("file_path{}에 파일이 존재하지 않습니다.".format(file_path))
 
-        self._f = h5py.File(file_path)
-        if subset_name not in self._f:
-            raise KeyError("{}이 {}에 없습니다".format(subset_name, file_path))
-        self._g = self._f[subset_name]
-        self._df_format = df_format
+        self._file_path = file_path
+        self._subset_name = subset_name
+        with h5py.File(self._file_path, "r") as _f:
+            if subset_name not in _f:
+                raise KeyError("{}이 {}에 없습니다".format(subset_name, file_path))
+            _g = _f[subset_name]
+            self._len = len(_g['pid'][:])
+            self._df_format = df_format
 
-        # column type 나누기
-        self._int_cols = []
-        self._str_cols = []
-        for col, value in self._g.items():
-            if np.issubdtype(value.dtype, np.string_):
-                self._str_cols.append(col)
-            elif np.issubdtype(value.dtype, np.integer):
-                self._int_cols.append(col)
-            elif np.issubdtype(value.dtype, np.floating):
-                warnings.warn("아직 img_feat를 Data Loader로 호출할 수 없습니다. img_feat는 직접 h5파일에서 호출해 주세요.")
-                # TODO : 아직 img_feat를 읽어들이는 기능은 추가하지 않았음
-                pass
-            else:
-                raise ValueError("처리할 수 없는 data type입니다.")
+            # column type 나누기
+            self._int_cols = []
+            self._str_cols = []
+            for col, value in _g.items():
+                if np.issubdtype(value.dtype, np.string_):
+                    self._str_cols.append(col)
+                elif np.issubdtype(value.dtype, np.integer):
+                    self._int_cols.append(col)
+                elif np.issubdtype(value.dtype, np.floating):
+                    warnings.warn("아직 img_feat를 Data Loader로 호출할 수 없습니다. img_feat는 직접 h5파일에서 호출해 주세요.")
+                    # TODO : 아직 img_feat를 읽어들이는 기능은 추가하지 않았음
+                    pass
+                else:
+                    raise ValueError("처리할 수 없는 data type입니다.")
 
         self.columns = self._int_cols + self._str_cols
-        self._len = len(self._g['pid'][:])
 
     def __len__(self):
         return self._len
@@ -116,14 +118,11 @@ class DataExtractor(object):
         else:
             return items[0]
 
-    def __del__(self):
-        # 이 인스턴스가 제거될 때 file을 닫아주어야 함
-        self._f.close()
-        del self._f
-
     def _get_item(self, col, slc):
         if col in self.columns:
-            item = self._g[col][slc]
+            with h5py.File(self._file_path, 'r') as _f:
+                _g = _f[self._subset_name]
+                item = _g[col][slc]
         else:
             raise KeyError("DataLoader Column에 {}키는 없습니다.".format(col))
         if self._df_format:

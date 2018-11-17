@@ -1,4 +1,6 @@
 import sys
+import time
+from multiprocessing import Pool
 from unittest import TestCase, main
 
 import numpy as np
@@ -119,6 +121,23 @@ class DataLoaderSimpleTest(TestCase):
             [24, -1]],
             columns=['bcateid', 'price'], dtype='int32')
         assert_frame_equal(pred, answer)
+
+    def test_get_value_by_multiprocessing(self):
+        pool = Pool(100)
+        rc = pool.map_async(get_add_value, range(0, 1000))
+        result = rc.get()
+        self.assertEqual(sum(result), 0)
+
+
+def get_add_value(i):
+    dex = DataExtractor("test.h5", 'train')
+    for j in range(0, 10):
+        time.sleep(0.0001)
+        try:
+            x = dex['model', j]
+        except:
+            return True
+    return False
 
 
 class DataLoaderNumpyOutTest(TestCase):
