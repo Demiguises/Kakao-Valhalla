@@ -1,3 +1,4 @@
+import sys
 from unittest import TestCase, main
 
 import numpy as np
@@ -5,6 +6,7 @@ import pandas as pd
 from numpy.testing import assert_array_equal
 from pandas.util.testing import assert_series_equal, assert_frame_equal
 
+sys.path.append("../")
 from valhalla.extract import DataExtractor
 
 """
