@@ -1,4 +1,5 @@
 import re
+from typing import List
 
 import numpy as np
 import pandas as pd
@@ -209,9 +210,14 @@ class RegExReplacer(BaseEstimator, TransformerMixin):
             raise TypeError("적절하지 못한 DataType이 들어왔습니다.")
 
     @staticmethod
-    def _transform(phrase):
-        # TODO : RegExReplacer 구현
-        return
+    def _transform(phrase) -> List:
+        if re.search(r'[0-9]+(kg|KG|Kg)', phrase) is not None:
+            result = re.sub(r'[0-9]+(kg|KG|Kg)', '<단위>', phrase)
+        elif re.search(r'[0-9]+.(L)', phrase) is not None:
+            result = re.sub(r'[0-9]+(L)', '<부피단위>', phrase)
+        else:
+            result = phrase
+        return result
 
 
 class DuplicateRemover(BaseEstimator, TransformerMixin):
@@ -260,7 +266,6 @@ class StopWordRemover(BaseEstimator, TransformerMixin):
     >>> transformer = StopWordRemover(['판매', '기타'])
     >>> transformer.transform(sample)
     ["노트북 할인", "옷 완전 세일", "비아그라 할인", "클래식기타 세일", "판매왕의"]
-
         pred = transformer.transform(answer)
     """
 
@@ -288,7 +293,6 @@ class StopWordRemover(BaseEstimator, TransformerMixin):
             raise TypeError("적절하지 못한 DataType이 들어왔습니다.")
 
     def _transform(self, phrase):
-        # TODO : stopword 구현
         _phrase = self._sw_regex.sub("", phrase)
         return self._ds_regex.sub(" ", _phrase).strip()
 
@@ -445,3 +449,4 @@ class PosTokenizer(BaseEstimator, TransformerMixin):
 # 카카오 데이터셋에 종속적으로 one-hot encoding을 짤지,
 # General한 형태로 one-hot encoding을 짤지가 고민이 되고 있습니다.
 ############################
+
