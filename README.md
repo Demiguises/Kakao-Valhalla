@@ -9,7 +9,7 @@ __우리는 Kakao-arena(1. 쇼핑몰 카테고리 분류)에 대한 Demiguises�
 
 
 
-### Introduction
+## Introduction
 
 우리는 **Competition**의 **Contestant**이자 **Contributor**로서 이 대회를 더욱 피터지는 전장으로 만들고자 한다.
 
@@ -31,7 +31,7 @@ __TO-BE__
 
 <br>
 
-### Motivation
+## Motivation
 
 *Team Demiguise는 대회를 우승하는 것 이상의, 모두가 함께 미친듯이 성장하는 가치를 만들어가고 싶다.*
 
@@ -47,7 +47,7 @@ __TO-BE__
 
 <br>
 
-### Objective
+## Objective
 
 Team Demiguise는 3가지 목표와 지향점을 가지고 시작한다.
 
@@ -73,7 +73,7 @@ __곧 이 코드베이스가 안정되는 순간, 오픈카톡방도 해동할 �
 
 <br>
 
-### *NOTE
+## *NOTE
 
 1.  [pep 8style](https://www.python.org/dev/peps/pep-0008/) : 우리의 코드는 기본적으로 pep8 style을 지향한다.<br>
 2. 코드 골격을 잡아나가고 있는 단계이기 때문에, 이 리파짓토리의 코드들은 계속 바뀌어 나갈 것이다.<br>
@@ -82,7 +82,7 @@ __곧 이 코드베이스가 안정되는 순간, 오픈카톡방도 해동할 �
 
 <br>
 
-### USAGE
+## USAGE
 
 ```
 # 1. Install package
@@ -101,7 +101,7 @@ python valhalla/extract.py merge ../data/raw/ ../data/prep/textOnly.h5
 
 <br>
 
-### Phase flow
+## Phase flow
 
 누구라도 **Valhalla**에 뛰어들고, 전장터를 이용하기 위한 Flow manual
 
@@ -109,7 +109,7 @@ python valhalla/extract.py merge ../data/raw/ ../data/prep/textOnly.h5
 
 
 
-#### 1. 데이터 까보기 
+### 1. 데이터 까보기 
 
 >  Kakao-arena의 데이터는 hdf5 포멧으로 train, dev, test 데이터셋으로 제공되었다.
 >
@@ -119,7 +119,7 @@ python valhalla/extract.py merge ../data/raw/ ../data/prep/textOnly.h5
 
 / PHASE 1. EXTRACT
 
-#### 2. 데이터 모으기 ( Making textOnly.h5 )
+### 2. 데이터 모으기 ( Making textOnly.h5 )
 
 Input : 9개로 나누어진 대빵 큰 raw data => output : 12기가짜리 통합 data
 
@@ -129,7 +129,7 @@ Input : 9개로 나누어진 대빵 큰 raw data => output : 12기가짜리 통�
 
 
 
-#### 3.  데이터 로더 만들기 ( DataExtractor )
+### 3.  데이터 로더 만들기 ( DataExtractor )
 
 Input : 제약이 많은 h5 변수
 
@@ -139,7 +139,7 @@ Input : 제약이 많은 h5 변수
 
 
 
-#### 4. 데이터를 간단히 탐색해보기 ( EDA )
+### 4. 데이터를 간단히 탐색해보기 ( EDA )
 
 > EDA (Exploratory data analysis)
 >
@@ -149,7 +149,7 @@ Input : 제약이 많은 h5 변수
 
 
 
-#### 5. 간단한 데이터 전처리 하기 (1) product & Model (TODO)
+### 5. 간단한 데이터 전처리 하기 (1) product & Model (TODO)
 
 >  1. Product column
 >  2. Model column
@@ -158,7 +158,7 @@ Input : 제약이 많은 h5 변수
 
 
 
-#### 6. 간단한 데이터 전처리 하기 (2) brand & Maker (TODO)
+### 6. 간단한 데이터 전처리 하기 (2) brand & Maker (TODO)
 >  1. Brand
 >  2. Maker
 >
@@ -168,7 +168,7 @@ Input : 제약이 많은 h5 변수
 
 / PHASE 2. TRANSFORM
 
-#### 7. 본격적인 데이터 EDA 하기 (TODO)
+### 7. 본격적인 데이터 EDA 하기 (TODO)
 
 > EDA는 소중하다. 가장 꼼꼼해지는 순간.
 
@@ -178,7 +178,7 @@ Input : 제약이 많은 h5 변수
 
 / PHASE 4. MODEL
 
-#### 8. 가장 간단한 모델로 돌려보기 (TODO)
+### 8. 가장 간단한 모델로 돌려보기 (TODO)
 
 > 우리만의 BaseLine 모델을 만들어 보자. 
 >
@@ -190,17 +190,15 @@ Input : 제약이 많은 h5 변수
 
 
 
-### REFERENCES
-
-1. pep8 : 
+## REFERENCES
 
 
 
-### 기여자
+## Contributor
 
 1. rocketgrowthsj : rocketgrowthsj@gmail.com
 2. Best10 : best10.csy@gmail.com / +82 10 7242 0548
-
+3. ...
 
 
 ## [License](https://github.com/Demiguises/Kakao-Valhalla/blob/master/LICENSE)
