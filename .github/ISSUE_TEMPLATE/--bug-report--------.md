@@ -1,7 +1,6 @@
 ---
 name: "\U0001F41BBug report / 에러나요ㅠ"
 about: 다신 에러나지 않게 해줄게!
-labels: 
 
 ---
 
@@ -46,5 +45,5 @@ labels:
 - Package Version : [e.g. keras 2.2.4]
 
 
-**6. Additional context / 더 해주고 싶은 말 있..니..?**
+**6. Additional context / 더 해주고 싶은 말 있나요?**
 Add any other context about the problem here.

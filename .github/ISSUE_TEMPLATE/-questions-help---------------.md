@@ -1,7 +1,6 @@
 ---
 name: "❓Questions&Help / 질문있어요! 도와줘요!"
 about: 도움이 필요하니?ㅎ 언제든 도와줄게 !
-labels: 
 
 ---
 

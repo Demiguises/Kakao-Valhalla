@@ -1,7 +1,6 @@
 ---
 name: "\U0001F680Improvement Suggest / 이건 어때요??"
 about: 뭐든 말만 해 ! 다 만들어버릴테니까.
-labels: 
 
 ---
 
