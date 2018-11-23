@@ -70,7 +70,6 @@ __우리는 이 지성집단 내에서 세미나와 스터디, 해커톤, 네트
 <br>
 
 ## *NOTE
-## *NOTE
 
 1. __[pep 8style](https://www.python.org/dev/peps/pep-0008/) __: 우리의 코드는 기본적으로 pep8 style을 지향한다.<br>
 2. __[TDD(Test-Driven Development)](https://ko.wikipedia.org/wiki/%ED%85%8C%EC%8A%A4%ED%8A%B8_%EC%A3%BC%EB%8F%84_%EA%B0%9C%EB%B0%9C)__ : 우리의 코드는 TDD 를 지향하고자 한다.<br>
@@ -120,7 +119,7 @@ python valhalla/extract.py merge ../data/raw/ ../data/prep/textOnly.h5
 
 
 
-/ PHASE 1. EXTRACT
+`/ PHASE 1. EXTRACT`
 
 ### 2. 데이터 모으기 ( Making textOnly.h5 )
 
@@ -169,17 +168,17 @@ Input : 제약이 많은 h5 변수
 
 
 
-/ PHASE 2. TRANSFORM
+`/ PHASE 2. TRANSFORM`
 
 ### 7. 본격적인 데이터 EDA 하기 (TODO)
 
 > EDA는 소중하다. 가장 꼼꼼해지는 순간.
 
-/ PHASE 3. LOADER
+`/ PHASE 3. LOADER`
 
 
 
-/ PHASE 4. MODEL
+`/ PHASE 4. MODEL`
 
 ### 8. 가장 간단한 모델로 돌려보기 (TODO)
 
@@ -189,7 +188,7 @@ Input : 제약이 많은 h5 변수
 
 <br>
 
-/ PHASE 5. EVALUATE
+`/ PHASE 5. EVALUATE`
 
 
 
