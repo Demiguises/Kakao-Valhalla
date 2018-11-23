@@ -29,21 +29,23 @@ about: 다신 에러나지 않게 해줄게!
 **3. Expected behavior / 어떤 결과를 원했어요?**
 > A clear and concise description of what you expected to happen.
 > 딱! 원하는 결과만 짧고 간단하게 얘기해줘요.
-
+:
 
 **4. Screenshots / 혹시 에러 좀 보여줄 수 있어요?**
 > If applicable, add screenshots to help explain your problem.
 > 참조할만한 부분만 보여주면 돼요. (클립보드로 붙여넣기 해도 돼요 ! )
 
+:
 
 **5. Development Environment / 개발 환경을 알려줘요.**
 > 필요한 부분만 적어주시면 돼요 ~
+- OS: `[e.g. Linux, iOS, Windows]`
+- Compiler / Editor : `[e.g. gcc 7.1.0] `
+- Python Version :  `[e.g. Python 3.6.5]`
+- Package Version : `[e.g. keras 2.2.4]`
 
-- OS: [e.g. Linux, iOS, Windows]
-- Compiler / Editor : [e.g. gcc 7.1.0] 
-- Python Version :  [e.g. Python 3.6.5]
-- Package Version : [e.g. keras 2.2.4]
-
+:
 
 **6. Additional context / 더 해주고 싶은 말 있나요?**
 Add any other context about the problem here.
+:
