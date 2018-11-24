@@ -1,11 +1,10 @@
 import re
-from typing import List
+from functools import partial
 
 import numpy as np
 import pandas as pd
 from konlpy.tag import Okt
 from sklearn.base import BaseEstimator, TransformerMixin
-from functools import partial
 
 __all__ = ['ColumnMerger', 'WordUnifier',
            'RegExReplacer', 'DuplicateRemover', 'StopWordRemover',
