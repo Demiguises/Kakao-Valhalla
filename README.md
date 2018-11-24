@@ -9,7 +9,7 @@ __우리는 Kakao-arena(1. 쇼핑몰 카테고리 분류)에 대한 Demiguises�
 
 
 
-### Introduction
+## Introduction
 
 우리는 **Competition**의 **Contestant**이자 **Contributor**로서 이 대회를 더욱 피터지는 전장으로 만들고자 한다.
 
@@ -31,7 +31,7 @@ __TO-BE__
 
 <br>
 
-### Motivation
+## Motivation
 
 *Team Demiguise는 대회를 우승하는 것 이상의, 모두가 함께 미친듯이 성장하는 가치를 만들어가고 싶다.*
 
@@ -47,7 +47,7 @@ __TO-BE__
 
 <br>
 
-### Objective
+## Objective
 
 Team Demiguise는 3가지 목표와 지향점을 가지고 시작한다.
 
@@ -58,31 +58,32 @@ Team Demiguise는 3가지 목표와 지향점을 가지고 시작한다.
     
 3. 프로젝트의 진행과 생각의 흐름을 정리하여 재사용성 높은 지식 체계의 구축
 ```
-
-이 글을 보고 혹시 함께 하고 싶은 개발자는 누구나 위의 오픈카톡방 링크를 통해 함께하길 바란다.(걱정 마라. 익명이다.)<br>
-
+이 글을 보고 혹시 함께 하고 싶은 개발자는 누구나  [오픈카톡방](https://open.kakao.com/o/go6Idb4)을 통해 함께하길 바란다.(걱정 마라. 익명이다.)<br>
 해당 github과 오픈톡방을 중심으로 소통하고, A2V 프로젝트를 계속 이어나가 하나의 지성집단을 만들고자 한다.<br>
 
 __우리는 이 지성집단 내에서 세미나와 스터디, 해커톤, 네트워킹 등 다양한 커뮤니티 활동을 진행할 예정이다.__
 
-종종 연락하고 안부인사 좀 묻고 그런 사이가 좀 되어 보자. <br>
 
-__(아직 프로젝트가 홍보단계에 진입하지 않아, 오픈카톡방에 비밀번호를 걸었습니다. __<br>
-
-__곧 이 코드베이스가 안정되는 순간, 오픈카톡방도 해동할 예정입니다.)__
+종종 연락하고 안부인사 좀 묻고 그런 사이가 좀 되어 보자. <br>`
 
 <br>
 
-### *NOTE
+## *NOTE
 
-1.  [pep 8style](https://www.python.org/dev/peps/pep-0008/) : 우리의 코드는 기본적으로 pep8 style을 지향한다.<br>
-2. 코드 골격을 잡아나가고 있는 단계이기 때문에, 이 리파짓토리의 코드들은 계속 바뀌어 나갈 것이다.<br>
-3. 우리는 대회 참가하는 모두가 쉽게 사용할 수 있는 **Data Pipeline**을 구축하는 것을 목표로 하고 있다.<br>
-4. 조속히 코드 구조를 잡아나가, 모두가 Demiguise의 코드를 들고 달려들 수 있는 **Valhalla**를 구축하겠다.
+1. __[pep 8style](https://www.python.org/dev/peps/pep-0008/) __: 우리의 코드는 기본적으로 pep8 style을 지향한다.<br>
+2. __[TDD(Test-Driven Development)](https://ko.wikipedia.org/wiki/%ED%85%8C%EC%8A%A4%ED%8A%B8_%EC%A3%BC%EB%8F%84_%EA%B0%9C%EB%B0%9C)__ : 우리의 코드는 TDD 를 지향하고자 한다.<br>
+3. __Variability__ : 이 repository뿐 아니라 A2V의 모든 코드와 Form은 계속해서 변화한다.<br>
+4. __Data Pipeline__ : 우리는 **Data Pipeline**을 구축하여 코드의 재사용성과 정보성을 향상한다.<br>
+
+조속히 코드 구조를 잡아나가, 모두가 Demiguise의 코드를 들고 달려들 수 있는 **Valhalla**를 구축하겠다.
 
 <br>
 
-### USAGE
+
+
+<br>
+
+## USAGE
 
 ```
 # 1. Install package
@@ -101,15 +102,14 @@ python valhalla/extract.py merge ../data/raw/ ../data/prep/textOnly.h5
 
 <br>
 
-### Phase flow
+## Phase flow
 
 누구라도 **Valhalla**에 뛰어들고, 전장터를 이용하기 위한 Flow manual
 
 이 전장 설계의 흐름만 따라온다면 지금 이를 읽고 있는 자네도 **Valhalla**의 전사가 된다.
 
 
-
-#### 1. 데이터 까보기 
+### 1. 데이터 까보기 
 
 >  Kakao-arena의 데이터는 hdf5 포멧으로 train, dev, test 데이터셋으로 제공되었다.
 >
@@ -117,9 +117,9 @@ python valhalla/extract.py merge ../data/raw/ ../data/prep/textOnly.h5
 
 
 
-/ PHASE 1. EXTRACT
+`/ PHASE 1. EXTRACT`
 
-#### 2. 데이터 모으기 ( Making textOnly.h5 )
+### 2. 데이터 모으기 ( Making textOnly.h5 )
 
 Input : 9개로 나누어진 대빵 큰 raw data => output : 12기가짜리 통합 data
 
@@ -129,7 +129,7 @@ Input : 9개로 나누어진 대빵 큰 raw data => output : 12기가짜리 통�
 
 
 
-#### 3.  데이터 로더 만들기 ( DataExtractor )
+### 3.  데이터 로더 만들기 ( DataExtractor )
 
 Input : 제약이 많은 h5 변수
 
@@ -139,7 +139,7 @@ Input : 제약이 많은 h5 변수
 
 
 
-#### 4. 데이터를 간단히 탐색해보기 ( EDA )
+### 4. 데이터를 간단히 탐색해보기 ( EDA )
 
 > EDA (Exploratory data analysis)
 >
@@ -149,7 +149,7 @@ Input : 제약이 많은 h5 변수
 
 
 
-#### 5. 간단한 데이터 전처리 하기 (1) product & Model (TODO)
+### 5. 간단한 데이터 전처리 하기 (1) product & Model (TODO)
 
 >  1. Product column
 >  2. Model column
@@ -158,7 +158,7 @@ Input : 제약이 많은 h5 변수
 
 
 
-#### 6. 간단한 데이터 전처리 하기 (2) brand & Maker (TODO)
+### 6. 간단한 데이터 전처리 하기 (2) brand & Maker (TODO)
 >  1. Brand
 >  2. Maker
 >
@@ -166,19 +166,19 @@ Input : 제약이 많은 h5 변수
 
 
 
-/ PHASE 2. TRANSFORM
+`/ PHASE 2. TRANSFORM`
 
-#### 7. 본격적인 데이터 EDA 하기 (TODO)
+### 7. 본격적인 데이터 EDA 하기 (TODO)
 
 > EDA는 소중하다. 가장 꼼꼼해지는 순간.
 
-/ PHASE 3. LOADER
+`/ PHASE 3. LOADER`
 
 
 
-/ PHASE 4. MODEL
+`/ PHASE 4. MODEL`
 
-#### 8. 가장 간단한 모델로 돌려보기 (TODO)
+### 8. 가장 간단한 모델로 돌려보기 (TODO)
 
 > 우리만의 BaseLine 모델을 만들어 보자. 
 >
@@ -186,20 +186,18 @@ Input : 제약이 많은 h5 변수
 
 <br>
 
-/ PHASE 5. EVALUATE
+`/ PHASE 5. EVALUATE`
 
 
 
-### REFERENCES
-
-1. pep8 : 
+## REFERENCES
 
 
-
-### 기여자
+## Contributor
 
 1. rocketgrowthsj : rocketgrowthsj@gmail.com
 2. Best10 : best10.csy@gmail.com / +82 10 7242 0548
+3. ...
 
 
 

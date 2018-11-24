@@ -1,4 +1,5 @@
 import re
+from typing import List
 
 import numpy as np
 import pandas as pd
@@ -365,7 +366,7 @@ class PosTokenizer(BaseEstimator, TransformerMixin):
 
 
 class CategoryOneHotEncoder(BaseEstimator, TransformerMixin):
-    def __init__(self, inputs=[], outputs=None, with_missing=False):
+    def __init__(self, inputs=[], outputs=None):
         self._inputs, self._outputs = verify_inputs_and_outputs(inputs, outputs)
 
         not_category_name = set(self._inputs) - set(['bcateid','dcateid', 'mcateid', 'scateid'])
