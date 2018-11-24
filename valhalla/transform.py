@@ -4,10 +4,12 @@ import numpy as np
 import pandas as pd
 from konlpy.tag import Okt
 from sklearn.base import BaseEstimator, TransformerMixin
+from functools import partial
 
 __all__ = ['ColumnMerger', 'WordUnifier',
            'RegExReplacer', 'DuplicateRemover', 'StopWordRemover',
-           'WordLower', 'MorphTokenizer', 'NounTokenizer', 'PosTokenizer']
+           'WordLower', 'MorphTokenizer', 'NounTokenizer', 'PosTokenizer',
+           "CategoryOneHotEncoder"]
 
 """
 ## Transform 코드 구성
@@ -366,35 +368,33 @@ class CategoryOneHotEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, inputs=[], outputs=None, with_missing=False):
         self._inputs, self._outputs = verify_inputs_and_outputs(inputs, outputs)
 
+        not_category_name = set(self._inputs) - set(['bcateid','dcateid', 'mcateid', 'scateid'])
+        if len(not_category_name) > 0:
+            raise ValueError("카테고리 이름이 아닌 것이 존재합니다 . {}".format(not_category_name))
+
+
     def fit(self, X, y=None):
-        if X.min() == -1:
-            self._need2abs = True
-        self._ndim = X.max()
         return self
 
     def transform(self, X):
-        if self._ndim is None:
-            raise ValueError("우선 해당 카테고리를 Fit해주시길 바랍니다")
+        for src_name, dst_name in zip(self._inputs, self._outputs):
+            X[dst_name] = X[src_name].map(partial(self._transform,src_name))
+        return X
 
-        if isinstance(X, np.ndarray):
-            x_shape = X.shape
-            return np.array([self._transform(phrase)
-                             for phrase in X.ravel()]).reshape(x_shape)
-        elif isinstance(X, pd.Series):
-            return X.values
-        else:
-            raise TypeError("적절하지 못한 DataType이 들어왔습니다.")
+    @staticmethod
+    def _transform(category_name, x):
+        if category_name == "bcateid":
+            vec_size = 57
+        elif category_name == "mcateid":
+            vec_size = 552
+        elif category_name == "scateid":
+            vec_size = 3190
+        elif category_name == "dcateid":
+            vec_size = 404
 
-    def _transform(self, phrase):
-        pos_list = self._okt.pos(phrase, norm=self._norm, stem=self._stem)
-        pos_drop = list(filter(
-            lambda pos: pos[1] not in self._excludes, pos_list))
-
-        if len(pos_drop) == 0:
-            return ""
-        else:
-            return " ".join(list(zip(*pos_drop))[0])
-
+        result = np.zeros(shape=(vec_size,), dtype=np.bool)
+        result[abs(x)-1] = 1
+        return result
 
 def verify_inputs_and_outputs(inputs, outputs):
     """
