@@ -58,12 +58,11 @@ Team Demiguise는 3가지 목표와 지향점을 가지고 시작한다.
     
 3. 프로젝트의 진행과 생각의 흐름을 정리하여 재사용성 높은 지식 체계의 구축
 ```
-
 이 글을 보고 혹시 함께 하고 싶은 개발자는 누구나  [오픈카톡방](https://open.kakao.com/o/go6Idb4)을 통해 함께하길 바란다.(걱정 마라. 익명이다.)<br>
-
 해당 github과 오픈톡방을 중심으로 소통하고, A2V 프로젝트를 계속 이어나가 하나의 지성집단을 만들고자 한다.<br>
 
 __우리는 이 지성집단 내에서 세미나와 스터디, 해커톤, 네트워킹 등 다양한 커뮤니티 활동을 진행할 예정이다.__
+
 
 종종 연락하고 안부인사 좀 묻고 그런 사이가 좀 되어 보자. <br>`
 
@@ -108,7 +107,6 @@ python valhalla/extract.py merge ../data/raw/ ../data/prep/textOnly.h5
 누구라도 **Valhalla**에 뛰어들고, 전장터를 이용하기 위한 Flow manual
 
 이 전장 설계의 흐름만 따라온다면 지금 이를 읽고 있는 자네도 **Valhalla**의 전사가 된다.
-
 
 
 ### 1. 데이터 까보기 
@@ -195,12 +193,12 @@ Input : 제약이 많은 h5 변수
 ## REFERENCES
 
 
-
 ## Contributor
 
 1. rocketgrowthsj : rocketgrowthsj@gmail.com
 2. Best10 : best10.csy@gmail.com / +82 10 7242 0548
 3. ...
+
 
 
 ## [License](https://github.com/Demiguises/Kakao-Valhalla/blob/master/LICENSE)
