@@ -70,7 +70,7 @@ __우리는 이 지성집단 내에서 세미나와 스터디, 해커톤, 네트
 
 ## *NOTE
 
-1. __[pep 8style](https://www.python.org/dev/peps/pep-0008/) __: 우리의 코드는 기본적으로 pep8 style을 지향한다.<br>
+1. __[pep 8style](https://www.python.org/dev/peps/pep-0008/)__: 우리의 코드는 기본적으로 pep8 style을 지향한다.<br>
 2. __[TDD(Test-Driven Development)](https://ko.wikipedia.org/wiki/%ED%85%8C%EC%8A%A4%ED%8A%B8_%EC%A3%BC%EB%8F%84_%EA%B0%9C%EB%B0%9C)__ : 우리의 코드는 TDD 를 지향하고자 한다.<br>
 3. __Variability__ : 이 repository뿐 아니라 A2V의 모든 코드와 Form은 계속해서 변화한다.<br>
 4. __Data Pipeline__ : 우리는 **Data Pipeline**을 구축하여 코드의 재사용성과 정보성을 향상한다.<br>
