@@ -10,6 +10,9 @@ import pandas as pd
 from konlpy.tag import Okt
 from sklearn.base import BaseEstimator, TransformerMixin
 
+VALHALLA_DIR = os.path.dirname(__file__)
+ROOT_DIR = os.path.split(VALHALLA_DIR)[0]
+
 __all__ = ['ColumnMerger', 'WordUnifier',
            'RegExReplacer', 'DuplicateRemover', 'StopWordRemover',
            'WordLower', 'MorphTokenizer', 'NounTokenizer', 'PosTokenizer',
@@ -88,7 +91,8 @@ class ColumnMerger(BaseEstimator, TransformerMixin):
         :param inputs: 적용되는 column Name list
         :param outputs: 저장되는 column 이름, if None, inputs에 대체
         """
-        self._inputs, self._outputs = verify_inputs_and_outputs(inputs, outputs)
+        self._inputs, self._outputs = verify_inputs_and_outputs(
+            inputs, outputs)
 
     def fit(self, X, y=None):
         return self
@@ -126,11 +130,13 @@ class WordUnifier(BaseEstimator, TransformerMixin):
         :param outputs:
         :param words_list:
         """
-        self._inputs, self._outputs = verify_inputs_and_outputs(inputs, outputs)
+        self._inputs, self._outputs = verify_inputs_and_outputs(
+            inputs, outputs)
 
         self._regex_list = []
         for words in words_list:
-            unified = r'\b{}\b'.format(r'\b|\b'.join(map(re.escape, words[1:])))
+            unified = r'\b{}\b'.format(
+                r'\b|\b'.join(map(re.escape, words[1:])))
             unify_regex = re.compile(unified)
             self._regex_list.append((words[0], unify_regex))
 
@@ -166,7 +172,8 @@ class RegExReplacer(BaseEstimator, TransformerMixin):
         :param outputs:
         :param regex_list:
         """
-        self._inputs, self._outputs = verify_inputs_and_outputs(inputs, outputs)
+        self._inputs, self._outputs = verify_inputs_and_outputs(
+            inputs, outputs)
 
         self._regex_list = regex_list
 
@@ -199,7 +206,8 @@ class DuplicateRemover(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, inputs=[], outputs=None):
-        self._inputs, self._outputs = verify_inputs_and_outputs(inputs, outputs)
+        self._inputs, self._outputs = verify_inputs_and_outputs(
+            inputs, outputs)
 
     def fit(self, X, y=None):
         return self
@@ -230,7 +238,8 @@ class StopWordRemover(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, inputs=[], outputs=None, stop_words=[]):
-        self._inputs, self._outputs = verify_inputs_and_outputs(inputs, outputs)
+        self._inputs, self._outputs = verify_inputs_and_outputs(
+            inputs, outputs)
 
         self._stop_words = stop_words
         self._sw_regex = re.compile(r'\b%s\b' %
@@ -264,7 +273,8 @@ class WordLower(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, inputs=[], outputs=None):
-        self._inputs, self._outputs = verify_inputs_and_outputs(inputs, outputs)
+        self._inputs, self._outputs = verify_inputs_and_outputs(
+            inputs, outputs)
 
     def fit(self, X, y=None):
         return self
@@ -293,7 +303,8 @@ class WordLower(BaseEstimator, TransformerMixin):
 ############################
 class MorphTokenizer(BaseEstimator, TransformerMixin):
     def __init__(self, inputs=[], outputs=None):
-        self._inputs, self._outputs = verify_inputs_and_outputs(inputs, outputs)
+        self._inputs, self._outputs = verify_inputs_and_outputs(
+            inputs, outputs)
         self._okt = Okt()
 
     def fit(self, X, y=None):
@@ -309,7 +320,8 @@ class MorphTokenizer(BaseEstimator, TransformerMixin):
 
 class NounTokenizer(BaseEstimator, TransformerMixin):
     def __init__(self, inputs=[], outputs=None):
-        self._inputs, self._outputs = verify_inputs_and_outputs(inputs, outputs)
+        self._inputs, self._outputs = verify_inputs_and_outputs(
+            inputs, outputs)
         self._okt = Okt()
 
     def fit(self, X, y=None):
@@ -327,7 +339,8 @@ class PosTokenizer(BaseEstimator, TransformerMixin):
     def __init__(self, inputs=[], outputs=None,
                  norm=False, stem=False,
                  excludes=['Punctuation', 'Number', 'Foreign']):
-        self._inputs, self._outputs = verify_inputs_and_outputs(inputs, outputs)
+        self._inputs, self._outputs = verify_inputs_and_outputs(
+            inputs, outputs)
 
         self._norm = norm
         self._stem = stem
@@ -375,19 +388,21 @@ class PosTokenizer(BaseEstimator, TransformerMixin):
 
 class CategoryOneHotEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, inputs=[], outputs=None):
-        self._inputs, self._outputs = verify_inputs_and_outputs(inputs, outputs)
+        self._inputs, self._outputs = verify_inputs_and_outputs(
+            inputs, outputs)
 
-        not_category_name = set(self._inputs) - set(['bcateid','dcateid', 'mcateid', 'scateid'])
+        not_category_name = set(self._inputs) - \
+            set(['bcateid', 'dcateid', 'mcateid', 'scateid'])
         if len(not_category_name) > 0:
-            raise ValueError("카테고리 이름이 아닌 것이 존재합니다 . {}".format(not_category_name))
-
+            raise ValueError(
+                "카테고리 이름이 아닌 것이 존재합니다 . {}".format(not_category_name))
 
     def fit(self, X, y=None):
         return self
 
     def transform(self, X):
         for src_name, dst_name in zip(self._inputs, self._outputs):
-            X[dst_name] = X[src_name].map(partial(self._transform,src_name))
+            X[dst_name] = X[src_name].map(partial(self._transform, src_name))
         return X
 
     @staticmethod
@@ -401,11 +416,12 @@ class CategoryOneHotEncoder(BaseEstimator, TransformerMixin):
         elif category_name == "dcateid":
             vec_size = 404
 
-        result = np.zeros(shape=(vec_size,), dtype=np.bool)
-        result[abs(x)-1] = 1
+        result = np.zeros(shape=(vec_size,), dtype=np.int8)
+        result[abs(x) - 1] = 1
         return result
 
-class UniqueOneHotEncoder(BaseEstimator,TransformerMixin):
+
+class UniqueOneHotEncoder(BaseEstimator, TransformerMixin):
     """
     대중소세로 나누어진 모든 category에 대해서 각각 one-hot encoding
     output column에 one-hot encoding된 code가 저장
@@ -413,38 +429,42 @@ class UniqueOneHotEncoder(BaseEstimator,TransformerMixin):
     :param outputs: encoding 된 code가 저장
 
     Example
-    >>> sample = pd.DataFrame(data = {"bcateid" : 1, "mcateid" : 425, "scateid" : 24, "dcateid" : -1})
+    >>> sample = pd.DataFrame(data = [{"bcateid" : 1, "mcateid" : 97, "scateid" : 1247, "dcateid" : -1}])
     >>> uoh = UniqueOneHotEncoder(outputs = "code")
     >>> uoh.transform(sample)
         bcateid    mcateid     scateid     dcateid      code
-    0   1          425         24          -1           "0001042500240001"
+    0   1          425         24          -1           0001042500240001
 
     """
-    def __init__(self, outputs):
-        if isinstance(outputs, str):
-            self._outputs = outputs
+
+    def __init__(self, output):
+        if isinstance(output, str):
+            self._outputs = output
         else:
             raise TypeError("outputs에 적절하지 못한 DataType이 들어왔습니다.")
 
         self._inputs = ["bcateid", "mcateid", "scateid", "dcateid"]
-        self.dir_path = os.path.abspath(os.path.join(os.path.dirname(__file__),"../data/prep/"))
-        file_path = os.path.join(self.dir_path, "codebook.json")
+        self._prep_dir = os.path.abspath(os.path.join(ROOT_DIR, "data/prep/"))
+        file_path = os.path.join(self._prep_dir, "codebook.json")
 
+        self.codebook = None
         if not os.path.exists(file_path):
-            warnings.warn("file_path : {}에 codebook이 존재하지 않습니다.".format(file_path))
-            self.codebook = None
+            warnings.warn(
+                "file_path : {}에 codebook이 존재하지 않습니다.".format(file_path))
         else:
-            with open(file_path,"r") as f:
+            with open(file_path, "r") as f:
                 self.codebook = json.load(f)
+                self._vec_size = len(self.codebook)
 
     def fit(self, X, y=None):
         return self
 
     def transform(self, X):
         result = self._transform(X[self._inputs])
-        result = result.map(lambda x: self.codebook[x])      # '0011022325980001' -> 897 # TODO : convert index to one-hot
+        result = result.map(self.codebook)
+        result = result.map(self.convert_to_onehot_vector)
         X[self._outputs] = result
-        
+
         return X
 
     def save_codebook(self, X):
@@ -455,28 +475,19 @@ class UniqueOneHotEncoder(BaseEstimator,TransformerMixin):
 
         :param X: 적용할 code Series
 
-        Example
-        >>> sample = pd.DataFrame(data = {"bcateid" : 1, "mcateid" : 425, "scateid" : 24, "dcateid" : -1})
-        >>> uoh = UniqueOneHotEncoder(outputs = "code")
-        >>> uoh.save_codebook(sample)
-        >>> uoh.codebook
-            {"0001042500240001" : 0}
         """
 
         unique_category = X[self._inputs].drop_duplicates()
-        unique_category = unique_category.sort_values(by = self._inputs)
+        unique_category = unique_category.sort_values(by=self._inputs)
         unique_category = unique_category.reset_index()
-        unique_category = unique_category.drop("index", axis = 1)
-        X[self._outputs] = self._transform(unique_category)
-        codebook = {v : k for k, v in X[self._outputs].to_dict().items()}
+        unique_category = unique_category.drop("index", axis=1)
+        _outputs = self._transform(unique_category)
+        codebook = {v: k for k, v in _outputs.to_dict().items()}
         self.codebook = codebook
 
-        file_path = os.path.join(self.dir_path, "codebook.json")
+        file_path = os.path.join(self._prep_dir, "codebook.json")
 
-        try:
-            os.makedirs(self.dir_path, exist_ok = True)
-        except OSError as e:
-            raise
+        os.makedirs(self._prep_dir, exist_ok=True)
         with open(file_path, 'w+') as f:
             codebook = json.dumps(codebook)
             f.writelines(codebook)
@@ -485,56 +496,66 @@ class UniqueOneHotEncoder(BaseEstimator,TransformerMixin):
         """
         one-hot encoding된 code(index정보)를 category정보로 전환
 
-        :param X: 적용할 code Series( index )        
+        :param X: 적용할 code Series( index )
         :return : Dataframe : bcateid, mcateid, scateid, dcateid 컬럼으로 각각 cateid value 저장
 
         Example
         >>> sample = pd.Series([3,5,10,24,405])
-        >>> uoh = UniqueOneHotEncoder(outputs = "code")
+        >>> uoh = UniqueOneHotEncoder(output= "code")
         >>> uoh.inverse_transform(sample)
-            bcateid mcateid scateid dcateid
-            1       1       753     -1
-            1       1       2308    -1
-            1       97      541     -1
-            1       116     2135    -1
-            6       231     383     -1
+           bcateid  mcateid  scateid  dcateid
+        0        1        1      753       -1
+        1        1        1     2308       -1
+        2        1       97      541       -1
+        3        1      116     2135       -1
+        4        6      231      383       -1
         """
-        codebook = {v : k for k, v in self.codebook.items()}
+        decodebook = {v: k for k, v in self.codebook.items()}
         if isinstance(X, pd.Series):
-            bcateids = X.apply(lambda x: int(codebook[x][:4]))
-            mcateids = X.apply(lambda x: int(codebook[x][4:8]))
-            scateids = X.apply(lambda x: int(codebook[x][8:12]) if int(codebook[x][8:12]) != 1 else -1 )
-            dcateids = X.apply(lambda x: int(codebook[x][12:]) if int(codebook[x][12:]) != 1 else -1)
-        
+            bcateids = X.apply(lambda x: int(decodebook[x][:4]))
+            mcateids = X.apply(lambda x: int(decodebook[x][4:8]))
+            scateids = X.apply(lambda x: int(decodebook[x][8:12]) if int(
+                decodebook[x][8:12]) != 1 else -1)
+            dcateids = X.apply(lambda x: int(decodebook[x][12:]) if int(
+                decodebook[x][12:]) != 1 else -1)
+
         elif isinstance(X, pd.DataFrame):
             if len(X.columns) == 1:
-                bcateids = X[X.columns[0]].apply(lambda x: int(codebook[x][:4]))
-                mcateids = X[X.columns[0]].apply(lambda x: int(codebook[x][4:8]))
-                scateids = X[X.columns[0]].apply(lambda x: int(codebook[x][8:12]) if int(codebook[x][8:12]) != 1 else -1 )
-                dcateids = X[X.columns[0]].apply(lambda x: int(codebook[x][12:]) if int(codebook[x][12:]) != 1 else -1)
+                bcateids = X[X.columns[0]].apply(
+                    lambda x: int(decodebook[x][:4]))
+                mcateids = X[X.columns[0]].apply(
+                    lambda x: int(decodebook[x][4:8]))
+                scateids = X[X.columns[0]].apply(lambda x: int(
+                    decodebook[x][8:12]) if int(decodebook[x][8:12]) != 1 else -1)
+                dcateids = X[X.columns[0]].apply(lambda x: int(
+                    decodebook[x][12:]) if int(decodebook[x][12:]) != 1 else -1)
             else:
-                raise ValueError(f"code 이외의 정보는 처리할 수 없습니다.(Series 또는 단일 Coulmn의 DataFrame) : {x.columns}")
+                raise ValueError(
+                    f"code 이외의 정보는 처리할 수 없습니다.(Series 또는 단일 Coulmn의 DataFrame) : {x.columns}")
         else:
-            raise TypeError(f"Code는 Series 또는 DataFrame type 이어야 합니다. : {type(X)}")
+            raise TypeError(
+                f"Code는 Series 또는 DataFrame type 이어야 합니다. : {type(X)}")
         return pd.DataFrame({
-            "bcateid":bcateids,
-            "mcateid":mcateids,
-            "scateid":scateids,
-            "dcateid":dcateids
-            })
-
+            "bcateid": bcateids,
+            "mcateid": mcateids,
+            "scateid": scateids,
+            "dcateid": dcateids
+        })
 
     @staticmethod
     def _transform(x):
         result = x.apply(
-            lambda x:str(
-            x["bcateid"]).zfill(4)
-             + str(x["mcateid"]).zfill(4)
-             + str(abs(x["scateid"])).zfill(4)
-             + str(abs(x["dcateid"])).zfill(4), axis = 1)
+            lambda x: str(
+                x["bcateid"]).zfill(4)
+            + str(x["mcateid"]).zfill(4)
+            + str(abs(x["scateid"])).zfill(4)
+            + str(abs(x["dcateid"])).zfill(4), axis=1)
         return result
 
-
+    def convert_to_onehot_vector(self, x):
+        output = np.zeros((self._vec_size,), dtype=np.int8)
+        output[x] = 1
+        return output
 
 
 def verify_inputs_and_outputs(inputs, outputs):
