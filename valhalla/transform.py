@@ -1,4 +1,8 @@
 import re
+import json
+import os
+import warnings
+
 from functools import partial
 
 import numpy as np
@@ -9,7 +13,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 __all__ = ['ColumnMerger', 'WordUnifier',
            'RegExReplacer', 'DuplicateRemover', 'StopWordRemover',
            'WordLower', 'MorphTokenizer', 'NounTokenizer', 'PosTokenizer',
-           "CategoryOneHotEncoder"]
+           "CategoryOneHotEncoder", "UniqueOneHotEncoder"]
 
 """
 ## Transform 코드 구성
@@ -43,6 +47,9 @@ __all__ = ['ColumnMerger', 'WordUnifier',
 
         - CategoryMergeEncoder
             카테고리 라벨 정보를 합쳐서 encoding함
+
+        - UniqueOneHotEncoder
+            각 세부카테고리까지 개별로 one-hot encoding
 """
 
 
@@ -356,6 +363,8 @@ class PosTokenizer(BaseEstimator, TransformerMixin):
 
 ############################
 # 5. Category Transform
+#  - CategoryOneHotEncoder
+#  - UniqueOneHotEncoder
 #
 # 고민포인트
 # ----------------
@@ -396,6 +405,138 @@ class CategoryOneHotEncoder(BaseEstimator, TransformerMixin):
         result[abs(x)-1] = 1
         return result
 
+class UniqueOneHotEncoder(BaseEstimator,TransformerMixin):
+    """
+    대중소세로 나누어진 모든 category에 대해서 각각 one-hot encoding
+    output column에 one-hot encoding된 code가 저장
+
+    :param outputs: encoding 된 code가 저장
+
+    Example
+    >>> sample = pd.DataFrame(data = {"bcateid" : 1, "mcateid" : 425, "scateid" : 24, "dcateid" : -1})
+    >>> uoh = UniqueOneHotEncoder(outputs = "code")
+    >>> uoh.transform(sample)
+        bcateid    mcateid     scateid     dcateid      code
+    0   1          425         24          -1           "0001042500240001"
+
+    """
+    def __init__(self, outputs):
+        if isinstance(outputs, str):
+            self._outputs = outputs
+        else:
+            raise TypeError("outputs에 적절하지 못한 DataType이 들어왔습니다.")
+
+        self._inputs = ["bcateid", "mcateid", "scateid", "dcateid"]
+        self.dir_path = os.path.abspath(os.path.join(os.path.dirname(__file__),"../data/prep/"))
+        file_path = os.path.join(self.dir_path, "codebook.json")
+
+        if not os.path.exists(file_path):
+            warnings.warn("file_path : {}에 codebook이 존재하지 않습니다.".format(file_path))
+            self.codebook = None
+        else:
+            with open(file_path,"r") as f:
+                self.codebook = json.load(f)
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        result = self._transform(X[self._inputs])
+        result = result.map(lambda x: self.codebook[x])      # '0011022325980001' -> 897 # TODO : convert index to one-hot
+        X[self._outputs] = result
+        
+        return X
+
+    def save_codebook(self, X):
+        """
+        one-hot encoding된 code를 category정보로 전환하여 json 형식으로 저장
+        save path : ~/data/prep/codebook.json
+        codebook : {categorycode : index}
+
+        :param X: 적용할 code Series
+
+        Example
+        >>> sample = pd.DataFrame(data = {"bcateid" : 1, "mcateid" : 425, "scateid" : 24, "dcateid" : -1})
+        >>> uoh = UniqueOneHotEncoder(outputs = "code")
+        >>> uoh.save_codebook(sample)
+        >>> uoh.codebook
+            {"0001042500240001" : 0}
+        """
+
+        unique_category = X[self._inputs].drop_duplicates()
+        unique_category = unique_category.sort_values(by = self._inputs)
+        unique_category = unique_category.reset_index()
+        unique_category = unique_category.drop("index", axis = 1)
+        X[self._outputs] = self._transform(unique_category)
+        codebook = {v : k for k, v in X[self._outputs].to_dict().items()}
+        self.codebook = codebook
+
+        file_path = os.path.join(self.dir_path, "codebook.json")
+
+        try:
+            os.makedirs(self.dir_path, exist_ok = True)
+        except OSError as e:
+            raise
+        with open(file_path, 'w+') as f:
+            codebook = json.dumps(codebook)
+            f.writelines(codebook)
+
+    def inverse_transform(self, X):
+        """
+        one-hot encoding된 code(index정보)를 category정보로 전환
+
+        :param X: 적용할 code Series( index )        
+        :return : Dataframe : bcateid, mcateid, scateid, dcateid 컬럼으로 각각 cateid value 저장
+
+        Example
+        >>> sample = pd.Series([3,5,10,24,405])
+        >>> uoh = UniqueOneHotEncoder(outputs = "code")
+        >>> uoh.inverse_transform(sample)
+            bcateid mcateid scateid dcateid
+            1       1       753     -1
+            1       1       2308    -1
+            1       97      541     -1
+            1       116     2135    -1
+            6       231     383     -1
+        """
+        codebook = {v : k for k, v in self.codebook.items()}
+        if isinstance(X, pd.Series):
+            bcateids = X.apply(lambda x: int(codebook[x][:4]))
+            mcateids = X.apply(lambda x: int(codebook[x][4:8]))
+            scateids = X.apply(lambda x: int(codebook[x][8:12]) if int(codebook[x][8:12]) != 1 else -1 )
+            dcateids = X.apply(lambda x: int(codebook[x][12:]) if int(codebook[x][12:]) != 1 else -1)
+        
+        elif isinstance(X, pd.DataFrame):
+            if len(X.columns) == 1:
+                bcateids = X[X.columns[0]].apply(lambda x: int(codebook[x][:4]))
+                mcateids = X[X.columns[0]].apply(lambda x: int(codebook[x][4:8]))
+                scateids = X[X.columns[0]].apply(lambda x: int(codebook[x][8:12]) if int(codebook[x][8:12]) != 1 else -1 )
+                dcateids = X[X.columns[0]].apply(lambda x: int(codebook[x][12:]) if int(codebook[x][12:]) != 1 else -1)
+            else:
+                raise ValueError(f"code 이외의 정보는 처리할 수 없습니다.(Series 또는 단일 Coulmn의 DataFrame) : {x.columns}")
+        else:
+            raise TypeError(f"Code는 Series 또는 DataFrame type 이어야 합니다. : {type(X)}")
+        return pd.DataFrame({
+            "bcateid":bcateids,
+            "mcateid":mcateids,
+            "scateid":scateids,
+            "dcateid":dcateids
+            })
+
+
+    @staticmethod
+    def _transform(x):
+        result = x.apply(
+            lambda x:str(
+            x["bcateid"]).zfill(4)
+             + str(x["mcateid"]).zfill(4)
+             + str(abs(x["scateid"])).zfill(4)
+             + str(abs(x["dcateid"])).zfill(4), axis = 1)
+        return result
+
+
+
+
 def verify_inputs_and_outputs(inputs, outputs):
     """
     Transform에 해당하는 inputs와 outputs를 일정한 형태로 만들어줌
@@ -413,7 +554,6 @@ def verify_inputs_and_outputs(inputs, outputs):
     else:
         raise TypeError("inputs에 적절하지 못한 dataType 들어왔습니다.")
 
-    _outputs = None
     _outputs = None
     if outputs is None:
         _outputs = _inputs
