@@ -5,7 +5,7 @@ ver.0.01
 TEAM DEMIGUISE
 2018.11.17 (sat)
 Programmer : rocket
-Doc writer : Best10
+Author : Best10
 Purpose : Sharing, Specification, Learning, User's manual
 ```
 
