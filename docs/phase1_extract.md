@@ -29,9 +29,9 @@ h5 Data를 정말 활용하기 좋게 만들어줄 Class를 만들었다.
 
 ​	2) ~/script/3)데이터\ 로더\ 만들기.ipynb  
 
-**3.Input** : $^{1.}$ textOnly.h5, $^{2.}$ cate1.json, $^{3.}$ train.chunk.01.h5 ~ train.chunk.09.h5
+**3.Input** : 1. textOnly.h5, 2. cate1.json, 3. train.chunk.01.h5 ~ train.chunk.09.h5
 
-__4.Output__ : $^{1.}$ DataExtractor Class,  $^{2.}$ cate_map dictionary, $^{3.}$ textOnly.h5
+**4.Output** : 1. DataExtractor Class,  2. cate_map dictionary, 3. textOnly.h5
 
 
 
@@ -47,7 +47,7 @@ __4.Output__ : $^{1.}$ DataExtractor Class,  $^{2.}$ cate_map dictionary, $^{3.}
 
 ## 3. DataExtractor
 
-**1. category : ** Data Structure
+**1. category :** Data Structure
 
 **2. Spec :** 
 
