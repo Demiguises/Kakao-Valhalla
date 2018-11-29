@@ -21,7 +21,7 @@ h5 Data를 정말 활용하기 좋게 만들어줄 Class를 만들었다.
 
 ## 1. Overview
 
-**1.Code : ** ~/valhalla/extract.py
+**1.Code :** ~/valhalla/extract.py
 
 **2.Script :**
 
