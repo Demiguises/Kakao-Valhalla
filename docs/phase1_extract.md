@@ -40,7 +40,7 @@ h5 Data를 정말 활용하기 좋게 만들어줄 Class를 만들었다.
 
 
 1. hdf5 type의 data에 대한 이해가 부족한 User들에게 이를  pandas의 dataframe 처럼 활용할 수 있는 환경을 제공하자.
-2. hdf5파일의 특성 상, $^{1.}$  여러 Session 에서 동시 open 시 file에 lock  $^{2.}$ instance를 delete하지 않고 Session 이 종료될경우 file에 lock이 걸려 더 이상 file을 사용할 수 없는 문제 해결하자.  
+2. hdf5파일의 특성 상, (1)  여러 Session 에서 동시 open 시 file에 lock  (2) instance를 delete하지 않고 Session 이 종료될경우 file에 lock이 걸려 더 이상 file을 사용할 수 없는 문제 해결하자.  
 3. 누구나 손쉽게 hdf5 format file을 open하고, load하고 save할 수 있는 환경을 만들자.
 
 
