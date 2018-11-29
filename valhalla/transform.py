@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 from konlpy.tag import Okt
 from sklearn.base import BaseEstimator, TransformerMixin
+from .extract import DataExtractor
 
 VALHALLA_DIR = os.path.dirname(__file__)
 ROOT_DIR = os.path.split(VALHALLA_DIR)[0]
@@ -144,7 +145,16 @@ class WordUnifier(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        X[self._outputs] = X[self._inputs].applymap(self._transform)
+        if isinstance(X, DataExtractor):
+            X = X[:,:]
+
+        if isinstance(X, pd.DataFrame):
+            X[self._outputs] = X[self._inputs].applymap(self._transform)
+        elif isinstance(X, pd.Series):
+            X = X.apply(self._transform)
+            X.name = self._outputs[0]
+        else:
+            raise ValueError("적절하지 못한 값이 들어왔습니다.")
         return X
 
     def _transform(self, phrase):
@@ -181,12 +191,21 @@ class RegExReplacer(BaseEstimator, TransformerMixin):
         return X
 
     def transform(self, X):
-        X[self._outputs] = X[self._inputs].applymap(self._transform)
+        if isinstance(X, DataExtractor):
+            X = X[:,:]
+
+        if isinstance(X, pd.DataFrame):
+            X[self._outputs] = X[self._inputs].applymap(self._transform)
+        elif isinstance(X, pd.Series):
+            X = X.apply(self._transform)
+            X.name = self._outputs[0]
+        else:
+            raise ValueError("적절하지 못한 값이 들어왔습니다.")
         return X
 
     def _transform(self, phrase):
-        for word, regex in self._regex_list:
-            phrase = regex.sub(word, phrase)
+        for regex, word in self._regex_list:
+            phrase = re.sub(regex, word, phrase)
         return phrase
 
 
@@ -213,7 +232,16 @@ class DuplicateRemover(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        X[self._outputs] = X[self._inputs].applymap(self._transform)
+        if isinstance(X, DataExtractor):
+            X = X[:,:]
+
+        if isinstance(X, pd.DataFrame):
+            X[self._outputs] = X[self._inputs].applymap(self._transform)
+        elif isinstance(X, pd.Series):
+            X = X.apply(self._transform)
+            X.name = self._outputs[0]
+        else:
+            raise ValueError("적절하지 못한 값이 들어왔습니다.")
         return X
 
     @staticmethod
@@ -250,7 +278,16 @@ class StopWordRemover(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        X[self._outputs] = X[self._inputs].applymap(self._transform)
+        if isinstance(X, DataExtractor):
+            X = X[:,:]
+
+        if isinstance(X, pd.DataFrame):
+            X[self._outputs] = X[self._inputs].applymap(self._transform)
+        elif isinstance(X, pd.Series):
+            X = X.apply(self._transform)
+            X.name = self._outputs[0]
+        else:
+            raise ValueError("적절하지 못한 값이 들어왔습니다.")
         return X
 
     def _transform(self, phrase):
@@ -280,7 +317,16 @@ class WordLower(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        X[self._outputs] = X[self._inputs].applymap(self._transform)
+        if isinstance(X, DataExtractor):
+            X = X[:,:]
+
+        if isinstance(X, pd.DataFrame):
+            X[self._outputs] = X[self._inputs].applymap(self._transform)
+        elif isinstance(X, pd.Series):
+            X = X.apply(self._transform)
+            X.name = self._outputs[0]
+        else:
+            raise ValueError("적절하지 못한 값이 들어왔습니다.")
         return X
 
     @staticmethod
@@ -311,7 +357,16 @@ class MorphTokenizer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        X[self._outputs] = X[self._inputs].applymap(self._transform)
+        if isinstance(X, DataExtractor):
+            X = X[:,:]
+
+        if isinstance(X, pd.DataFrame):
+            X[self._outputs] = X[self._inputs].applymap(self._transform)
+        elif isinstance(X, pd.Series):
+            X = X.apply(self._transform)
+            X.name = self._outputs[0]
+        else:
+            raise ValueError("적절하지 못한 값이 들어왔습니다.")
         return X
 
     def _transform(self, phrase):
@@ -328,7 +383,16 @@ class NounTokenizer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        X[self._outputs] = X[self._inputs].applymap(self._transform)
+        if isinstance(X, DataExtractor):
+            X = X[:,:]
+
+        if isinstance(X, pd.DataFrame):
+            X[self._outputs] = X[self._inputs].applymap(self._transform)
+        elif isinstance(X, pd.Series):
+            X = X.apply(self._transform)
+            X.name = self._outputs[0]
+        else:
+            raise ValueError("적절하지 못한 값이 들어왔습니다.")
         return X
 
     def _transform(self, phrase):
@@ -351,7 +415,16 @@ class PosTokenizer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        X[self._outputs] = X[self._inputs].applymap(self._transform)
+        if isinstance(X, DataExtractor):
+            X = X[:,:]
+
+        if isinstance(X, pd.DataFrame):
+            X[self._outputs] = X[self._inputs].applymap(self._transform)
+        elif isinstance(X, pd.Series):
+            X = X.apply(self._transform)
+            X.name = self._outputs[0]
+        else:
+            raise ValueError("적절하지 못한 값이 들어왔습니다.")
         return X
 
     def _transform(self, phrase):

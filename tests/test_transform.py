@@ -48,8 +48,8 @@ class BasicNLPPreprocessingSimpleTest(TestCase):
     def test_RegExReplacer_with_pandas_input(self):
         df = pd.DataFrame({'단위':["열무김치 10kg 판매", "매실 5kg 포장", "미닛메이드 10L 병", "포도주스 30L 병",
                             "kgfi 공인 판매", "lipspace 판매"]})
-        transformer = RegExReplacer(inputs='단위', regex_list=[("<단위>",re.compile("[0-9]+kg")),
-                                                              ("<부피단위>", re.compile("[0-9]+L"))])
+        transformer = RegExReplacer(inputs='단위', regex_list=[("[0-9]+kg", "<단위>"),
+                                                              ("[0-9]+L", "<부피단위>")])
         answer = df.copy()
         answer['단위'] = ["열무김치 <단위> 판매", "매실 <단위> 포장", "미닛메이드 <부피단위> 병", "포도주스 <부피단위> 병",
                             "kgfi 공인 판매", "lipspace 판매"]
