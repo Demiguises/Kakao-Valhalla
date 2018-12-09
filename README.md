@@ -86,7 +86,7 @@ __우리는 이 지성집단 내에서 세미나와 스터디, 해커톤, 네트
 ## USAGE
 
 ```
-# 1. Install package
+# 1. Install packages
 pip install -r requirements.txt
 
 # 2. Setting Data Structure
