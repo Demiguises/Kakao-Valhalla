@@ -66,7 +66,7 @@ h5 Data를 정말 활용하기 좋게 만들어줄 Class를 만들었다.
 dl = DataExtractor( H5_SRC_FILE_PATH, subset_name, df_format) 
 
 2. User가 원하는 Data를 호출 
-dl[[column_name, ... ], start\_row : end_row ] 
+dl[[column_name, ... ], start_row : end_row ] 
 # pandas dataframe이 return
 ```
 
