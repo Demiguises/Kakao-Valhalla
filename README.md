@@ -17,7 +17,7 @@ __우리는 Kakao-arena(1. 쇼핑몰 카테고리 분류)에 대한 Demiguises�
 
 __AS-IS__
 
-1. 함께 싸우고 싶은 많은 개발자들이 우수한 모델링 기술과 지식을 가지고 있음에도 기술적 제약이나 딥러닝 이외의 지식 (Data handling 등)이 부족으로 대회 출전에 주저하고 있다.
+1. 함께 싸우고 싶은 많은 개발자들이 우수한 모델링 기술과 지식을 가지고 있음에도 기술적 제약이나 딥러닝 이외의 지식 (Data handling 등)의 부족으로 대회 출전에 주저하고 있다.
 2. 뿐만 아니라, 2달이라는 대회 기간동안 딥러닝 모델링에 집중을 하지 못하고 다른 문제에 부딫혀 빛을 발하지 못하는 안타까운 팀도 많이 있다.
 3. 스스로 실력이 미숙하다고 생각하거나, 문화적 차이를 느낀다거나, 용기가 나질 않아 커뮤니티 활동(대회, 해커톤, 네트워킹 등)에 등져 자신감을 잃은 개발자들을 많이 목격했다.
 
@@ -70,7 +70,7 @@ __우리는 이 지성집단 내에서 세미나와 스터디, 해커톤, 네트
 
 ## *NOTE
 
-1. __[pep 8style](https://www.python.org/dev/peps/pep-0008/) __: 우리의 코드는 기본적으로 pep8 style을 지향한다.<br>
+1. __[pep 8style](https://www.python.org/dev/peps/pep-0008/)__: 우리의 코드는 기본적으로 pep8 style을 지향한다.<br>
 2. __[TDD(Test-Driven Development)](https://ko.wikipedia.org/wiki/%ED%85%8C%EC%8A%A4%ED%8A%B8_%EC%A3%BC%EB%8F%84_%EA%B0%9C%EB%B0%9C)__ : 우리의 코드는 TDD 를 지향하고자 한다.<br>
 3. __Variability__ : 이 repository뿐 아니라 A2V의 모든 코드와 Form은 계속해서 변화한다.<br>
 4. __Data Pipeline__ : 우리는 **Data Pipeline**을 구축하여 코드의 재사용성과 정보성을 향상한다.<br>
@@ -86,7 +86,7 @@ __우리는 이 지성집단 내에서 세미나와 스터디, 해커톤, 네트
 ## USAGE
 
 ```
-# 1. Install package
+# 1. Install packages
 pip install -r requirements.txt
 
 # 2. Setting Data Structure

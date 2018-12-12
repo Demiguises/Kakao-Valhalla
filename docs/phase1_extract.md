@@ -5,7 +5,7 @@ ver.0.01
 TEAM DEMIGUISE
 2018.11.17 (sat)
 Programmer : rocket
-Doc writer : Best10
+Author : Best10
 Purpose : Sharing, Specification, Learning, User's manual
 ```
 
@@ -21,7 +21,7 @@ h5 Data를 정말 활용하기 좋게 만들어줄 Class를 만들었다.
 
 ## 1. Overview
 
-**1.Code : ** ~/valhalla/extract.py
+**1.Code :** [~/valhalla/extract.py](#3-dataextractor)
 
 **2.Script :**
 
@@ -29,9 +29,9 @@ h5 Data를 정말 활용하기 좋게 만들어줄 Class를 만들었다.
 
 ​	2) ~/script/3)데이터\ 로더\ 만들기.ipynb  
 
-**3.Input** : $^{1.}$ textOnly.h5, $^{2.}$ cate1.json, $^{3.}$ train.chunk.01.h5 ~ train.chunk.09.h5
+**3.Input** : 1. textOnly.h5, 2. cate1.json, 3. train.chunk.01.h5 ~ train.chunk.09.h5
 
-__4.Output__ : $^{1.}$ DataExtractor Class,  $^{2.}$ cate_map dictionary, $^{3.}$ textOnly.h5
+**4.Output** : 1. DataExtractor Class,  2. cate_map dictionary, 3. textOnly.h5
 
 
 
@@ -40,14 +40,14 @@ __4.Output__ : $^{1.}$ DataExtractor Class,  $^{2.}$ cate_map dictionary, $^{3.}
 
 
 1. hdf5 type의 data에 대한 이해가 부족한 User들에게 이를  pandas의 dataframe 처럼 활용할 수 있는 환경을 제공하자.
-2. hdf5파일의 특성 상, $^{1.}$  여러 Session 에서 동시 open 시 file에 lock  $^{2.}$ instance를 delete하지 않고 Session 이 종료될경우 file에 lock이 걸려 더 이상 file을 사용할 수 없는 문제 해결하자.  
+2. hdf5파일의 특성 상, (1)  여러 Session 에서 동시 open 시 file에 lock  (2) instance를 delete하지 않고 Session 이 종료될경우 file에 lock이 걸려 더 이상 file을 사용할 수 없는 문제 해결하자.  
 3. 누구나 손쉽게 hdf5 format file을 open하고, load하고 save할 수 있는 환경을 만들자.
 
 
 
 ## 3. DataExtractor
 
-**1. category : ** Data Structure
+**1. category :** Data Structure
 
 **2. Spec :** 
 
@@ -66,7 +66,7 @@ __4.Output__ : $^{1.}$ DataExtractor Class,  $^{2.}$ cate_map dictionary, $^{3.}
 dl = DataExtractor( H5_SRC_FILE_PATH, subset_name, df_format) 
 
 2. User가 원하는 Data를 호출 
-dl[[column_name, ... ], start\_row : end_row ] 
+dl[[column_name, ... ], start_row : end_row ] 
 # pandas dataframe이 return
 ```
 
